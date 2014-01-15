@@ -7,6 +7,7 @@ existsSync = fs.existsSync ? path.existsSync
 exports.container = ->
 
   factories = {}
+  modules = {}
 
 
   ## REGISTER / PARSE ################################################
@@ -37,7 +38,7 @@ exports.container = ->
     # Remove dashes from files and camelcase results
     name = path.basename(module).replace(/\-(\w)/g, (match, letter) -> letter.toUpperCase())
 
-    register name, require(module)
+    modules[name] = module
 
   loaddir = (dir) ->
     filenames = fs.readdirSync dir
@@ -80,7 +81,12 @@ exports.container = ->
 
     factory = factories[name]
     if not factory?
-      throw new Error "dependency '#{name}' was not registered"
+      module = modules[name]
+      if module?
+        register name, require(module)
+        factory = factories[name]
+      else
+        throw new Error "dependency '#{name}' was not registered"
 
     # use the one you already created
     if factory.instance? and not isOverridden
@@ -123,4 +129,3 @@ exports.container = ->
   container.register "_container", container
 
   return container
-
