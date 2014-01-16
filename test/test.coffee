@@ -273,8 +273,31 @@ describe 'inject', ->
     it 'should let you load a file without an extension'
     it 'should load a folder with a file with parse errors without accidentally trying to load the folder as a file'
     it 'should not crash if trying to load something as a file without an extension (crashed on fs.stat)'
+    it 'should be lazy', (done) ->
 
+      dir = path.join os.tmpDir(), "testinject"
 
+      cfile = path.join dir, "C.js"
+      ccode = """
+        throw new Error('Should not be loaded because we do not require it');
+      """
+
+      dfile = path.join dir, "D.js"
+      dcode = """
+        module.exports = function() { return 'd'; };
+      """
+
+      fs.mkdir dir, (err) ->
+        # ignore err, if it already exists
+        fs.writeFile cfile, ccode, (err) ->
+          assert.ifError (err)
+          fs.writeFile dfile, dcode, (err) ->
+            assert.ifError (err)
+
+            deps = container()
+            deps.load dir
+            assert.equal 'd', deps.get 'D'
+            done()
 
   describe 'simple dependencies', ->
     it 'doesnt have to be a function. objects work too', ->
@@ -298,5 +321,3 @@ describe 'inject', ->
   describe 'maybe', ->
     it 'should support objects/data instead of functions?'
     it 'should support optional dependencies?'
-
-
