@@ -125,6 +125,15 @@ describe 'inject', ->
     catch e
       assert.ok false, "should not have thrown error"
 
+  it "should list dependencies registered", ->
+    deps = container()
+    deps.register "one", (name) -> name + " one"
+    deps.register "two", (name) -> name + " two"
+
+    list = deps.list()
+    assert.equal list.one.func("1"), "1 one"
+    assert.equal list.two.func("2"), "2 two"
+
   it "should throw error if it cant find dependency", ->
     deps = container()
 

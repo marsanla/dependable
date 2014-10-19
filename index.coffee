@@ -25,6 +25,8 @@ exports.container = ->
     if not func? then throw new Error "cannot register null function"
     factories[name] = toFactory func
 
+  list = -> factories
+
   load = (file) ->
     exists = existsSync file
     if exists
@@ -124,6 +126,7 @@ exports.container = ->
     resolve: resolve
     register: register
     load: load
+    list: list
 
   # let people access the container if the know what they're doing
   container.register "_container", container
