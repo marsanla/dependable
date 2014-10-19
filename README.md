@@ -146,6 +146,8 @@ Sounds like a hit!
 
 `container.resolve(overrides={}, cb)` - Calls `cb` like a dependency function, injecting any dependencies found in the signature. Like `container.get`, this supports overrides.
 
+`container.list()` - Return a list of registered dependencies.
+
 ## Development
 
 Dependable is written in coffeescript. To generate javascript, run `npm run prepublish`.
